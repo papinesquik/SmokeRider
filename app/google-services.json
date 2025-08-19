@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "521265728607",
+    "project_id": "smokerider-e03d1",
+    "storage_bucket": "smokerider-e03d1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:521265728607:android:c980c5b5be650de5c7dfea",
+        "android_client_info": {
+          "package_name": "com.smokerider.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBolTuSsqfHNXWdZYZTz32CjuGMSLVmBRM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
