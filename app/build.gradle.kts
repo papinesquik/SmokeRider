@@ -61,6 +61,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
 
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
+    implementation ("com.google.android.libraries.places:places:3.3.0")
+
     // Material Design (ti servirà comunque)
     implementation("com.google.android.material:material:1.12.0")
 
