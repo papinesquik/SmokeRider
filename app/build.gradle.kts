@@ -76,6 +76,30 @@ android {
 }
 
 dependencies {
+    // Navigation (runtime)
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // Navigation testing (serve per TestNavHostController)
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
+
+    // --- Unit Test (locali, su JVM) ---
+    testImplementation("junit:junit:4.13.2")
+
+    // --- Librerie extra per coroutine e flow (useremo nei ViewModel) ---
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation("app.cash.turbine:turbine:1.1.0")
+
+    // --- UI Test per Compose ---
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+
+    // Librerie di test Compose
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.7.2")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.2")
+
+    // --- Libreria per mock (simulare repo / firebase) ---
+    testImplementation("io.mockk:mockk:1.13.11")
+
     // Material Icons per Jetpack Compose
     implementation("androidx.compose.material:material-icons-extended")
 

@@ -10,14 +10,14 @@ class ProductRepository(
 ) {
     private val productsRef = firestore.collection("products")
 
-    // ➝ Aggiungi prodotto
+    // aggiungi prodotto
     suspend fun addProduct(product: Product) {
         val docRef = productsRef.document()
         val newProduct = product.copy(id = docRef.id)
         docRef.set(newProduct).await()
     }
 
-    // ➝ Ottieni prodotti in tempo reale
+    //ottieni prodotti in tempo reale
     fun getProducts(callback: (List<Product>) -> Unit): ListenerRegistration {
         return productsRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -29,14 +29,14 @@ class ProductRepository(
         }
     }
 
-    // ➝ Aggiorna nome e prezzo
+    // aggiorna nome e prezzo
     suspend fun updateProduct(id: String, newName: String, newPrice: Double) {
         productsRef.document(id)
             .update(mapOf("name" to newName, "price" to newPrice))
             .await()
     }
 
-    // ➝ Elimina prodotto
+    // elimina prodotto
     suspend fun deleteProduct(id: String) {
         productsRef.document(id).delete().await()
     }

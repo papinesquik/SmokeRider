@@ -25,7 +25,7 @@ fun TrackingOrdineScreen(
     var orderListener by remember { mutableStateOf<ListenerRegistration?>(null) }
     val scope = rememberCoroutineScope()
 
-    // 🔹 Listener realtime ordine (safe)
+    // Listener realtime ordine (safe)
     LaunchedEffect(orderId) {
         orderListener?.remove()
         orderListener = db.collection("orders").document(orderId)
@@ -34,12 +34,12 @@ fun TrackingOrdineScreen(
             }
     }
 
-    // 🔹 Cleanup listener
+    // cleanup listener
     DisposableEffect(Unit) {
         onDispose { orderListener?.remove() }
     }
 
-    // 🔹 Recupera posizione cliente via uid
+    //Recupera posizione cliente via uid
     LaunchedEffect(order?.clientId) {
         val cid = order?.clientId ?: return@LaunchedEffect
         val snap = db.collection("positions")
@@ -52,7 +52,7 @@ fun TrackingOrdineScreen(
 
     fun euro(v: Double) = "€${"%.2f".format(v)}"
 
-    // 🔹 UI
+    // UI
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -115,7 +115,7 @@ fun TrackingOrdineScreen(
 
                 HorizontalDivider()
 
-                // 🔹 Recap ordine (sempre visibile)
+                // Recap ordine (sempre visibile)
                 Text("Dettagli ordine:", style = MaterialTheme.typography.titleMedium)
                 o.items.forEach { item ->
                     Text("• ${item.name} x${item.quantity} = ${euro(item.price * item.quantity)}")
@@ -131,7 +131,7 @@ fun TrackingOrdineScreen(
     }
 }
 
-// 🔹 Messaggi user-friendly
+// Messaggi user-friendly
 fun statusMessage(status: String): String = when (status) {
     "pending" -> "In attesa che un rider accetti il tuo ordine..."
     "accepted" -> "Il tuo ordine è stato accettato, il rider si sta dirigendo verso la tabaccheria 🚴‍♂️"
@@ -142,7 +142,7 @@ fun statusMessage(status: String): String = when (status) {
     else -> status
 }
 
-// 🔹 Valore progress bar per ogni stato
+// Valore progress bar per ogni stato
 fun progressForStatus(status: String): Float = when (status) {
     "pending" -> 0.25f
     "accepted" -> 0.5f

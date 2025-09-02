@@ -1,4 +1,3 @@
-// File: ApprovaRiderViewModel.kt
 package com.smokerider.app.viewmodel
 
 import androidx.lifecycle.ViewModel

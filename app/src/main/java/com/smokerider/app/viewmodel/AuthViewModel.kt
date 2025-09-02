@@ -9,9 +9,9 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-// 👉 token FCM
+//token FCM
 import com.google.firebase.messaging.FirebaseMessaging
-// 👉 per pulire il token al logout
+// per pulire il token al logout
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FieldValue
 
@@ -108,7 +108,7 @@ class AuthViewModel(
                         FirebaseMessaging.getInstance().token
                             .addOnSuccessListener { token -> updateFcmToken(user.uid, token) }
                     }
-                    // clienti: nessuna azione sul token (non lo salviamo nel loro doc)
+                    // clienti: nessuna azione sul token
                 }.onFailure { e ->
                     _ui.update { it.copy(loading = false, error = e.userMessage(), signedIn = false) }
                 }

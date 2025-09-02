@@ -94,12 +94,12 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = startDestination!!
                     ) {
-                        // 🔹 Login/registrazione
+                        // Login/registrazione
                         composable("auth") {
                             AuthScreen(navController = navController)
                         }
 
-                        // 🔹 Admin
+                        // Admin
                         composable("admin/home") {
                             AdminHomeScreen(
                                 onApprovaRiderClick = { navController.navigate("admin/approvaRider") },
@@ -117,7 +117,7 @@ class MainActivity : ComponentActivity() {
                         composable("admin/aggiungiProdotto") { AggiungiProdottoScreen() }
                         composable("admin/prodotti") { ProductListScreen() }
 
-                        // 🔹 Rider
+                        // Rider
                         composable("rider/home") {
                             RiderHomeScreen(
                                 onOrderClick = { orderId ->
@@ -152,11 +152,11 @@ class MainActivity : ComponentActivity() {
 
                         //Cliente
                         composable("customer/home") {
-                            val ordersRepo = remember { FirestoreOrders() }   // <-- istanza repo una volta sola
+                            val ordersRepo = remember { FirestoreOrders() }
 
                             CustomerHomeScreen(
-                                navController = navController,                // <-- nuovo parametro
-                                ordersRepo = ordersRepo,                      // <-- nuovo parametro
+                                navController = navController,
+                                ordersRepo = ordersRepo,
                                 onEffettuaOrdineClick = { navController.navigate("customer/ordine") },
                                 onLogout = {
                                     FirebaseAuth.getInstance().signOut()

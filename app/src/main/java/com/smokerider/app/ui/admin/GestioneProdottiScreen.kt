@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.smokerider.app.data.model.Product
+import com.smokerider.app.ui.theme.screenInsets
 import com.smokerider.app.viewmodel.ProductViewModel
 
 @Composable
@@ -22,7 +23,7 @@ fun GestioneProdottiScreen(
     productViewModel: ProductViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val products by productViewModel.products.collectAsState() // lista aggiornata dal VM
+    val products by productViewModel.products.collectAsState()
     val success by productViewModel.success.collectAsState()
     val error by productViewModel.error.collectAsState()
 
@@ -30,7 +31,7 @@ fun GestioneProdottiScreen(
     var selectedCategory by remember { mutableStateOf("Tutte") }
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
 
-    // Toast feedback
+    // feedback toast
     LaunchedEffect(success, error) {
         success?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -42,12 +43,16 @@ fun GestioneProdottiScreen(
         }
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .screenInsets(includeTop = true, includeBottom = true, extraTop = 16.dp) // ⬅️ niente sovrapposizione, più respiro
+            .padding(horizontal = 16.dp)
+    ) {
         Text("Gestione Prodotti", style = MaterialTheme.typography.headlineMedium)
-
         Spacer(Modifier.height(16.dp))
 
-        // 🔍 Barra di ricerca
+        // ricerca
         OutlinedTextField(
             value = search,
             onValueChange = { search = it },
@@ -58,14 +63,11 @@ fun GestioneProdottiScreen(
 
         Spacer(Modifier.height(8.dp))
 
-        // 📂 Filtro categoria
+        // filtro categoria
         val categories = listOf("Tutte", "Sigarette", "E-Cig", "IQOS")
         var expanded by remember { mutableStateOf(false) }
-
         Box {
-            OutlinedButton(onClick = { expanded = true }) {
-                Text(selectedCategory)
-            }
+            OutlinedButton(onClick = { expanded = true }) { Text(selectedCategory) }
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 categories.forEach { cat ->
                     DropdownMenuItem(
@@ -81,7 +83,7 @@ fun GestioneProdottiScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        // 📜 Lista prodotti
+        // lista prodotti
         LazyColumn {
             val filtered = products.filter {
                 (selectedCategory == "Tutte" || it.category == selectedCategory) &&
@@ -94,7 +96,10 @@ fun GestioneProdottiScreen(
                         .padding(vertical = 4.dp)
                         .clickable { selectedProduct = product }
                 ) {
-                    Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Row(
+                        Modifier.padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
                         Text("${product.name} (${product.category})")
                         Text("${product.price} €")
                     }
@@ -103,68 +108,19 @@ fun GestioneProdottiScreen(
         }
     }
 
-    // 🔔 Dialog Dettagli/Modifica/Elimina
+    // dialog
     selectedProduct?.let { product ->
-        ProdottoDialog(
+        ProductDialog(
             product = product,
             onDismiss = { selectedProduct = null },
-            onUpdate = { name, price ->
-                productViewModel.updateProduct(product.id, name, price)
-                selectedProduct = null
-            },
             onDelete = {
                 productViewModel.deleteProduct(product.id)
+                selectedProduct = null
+            },
+            onUpdate = { newName, newPrice ->
+                productViewModel.updateProduct(product.id, newName, newPrice)
                 selectedProduct = null
             }
         )
     }
-}
-
-@Composable
-fun ProdottoDialog(
-    product: Product,
-    onDismiss: () -> Unit,
-    onUpdate: (String, Double) -> Unit,
-    onDelete: () -> Unit
-) {
-    var name by remember { mutableStateOf(product.name) }
-    var price by remember { mutableStateOf(product.price.toString()) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Gestisci Prodotto") },
-        text = {
-            Column {
-                Text("Categoria: ${product.category}")
-                Spacer(Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text("Nome") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = price,
-                    onValueChange = { price = it },
-                    label = { Text("Prezzo (€)") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = {
-                price.toDoubleOrNull()?.let { onUpdate(name, it) }
-            }) {
-                Text("Modifica")
-            }
-        },
-        dismissButton = {
-            Row {
-                TextButton(onClick = onDelete) { Text("Elimina") }
-                Spacer(Modifier.width(8.dp))
-                TextButton(onClick = onDismiss) { Text("Chiudi") }
-            }
-        }
-    )
 }

@@ -1,4 +1,3 @@
-// File: ApprovaRiderScreen.kt
 package com.smokerider.app.ui.admin
 
 import androidx.compose.foundation.clickable
@@ -8,9 +7,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.smokerider.app.ui.theme.screenInsets
 import com.smokerider.app.viewmodel.ApprovaRiderViewModel
 import com.smokerider.app.viewmodel.RiderWithPosition
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApprovaRiderScreen(
     vm: ApprovaRiderViewModel = viewModel()
@@ -18,13 +19,15 @@ fun ApprovaRiderScreen(
     val riders by vm.riders.collectAsState()
     var selected by remember { mutableStateOf<RiderWithPosition?>(null) }
 
-    LaunchedEffect(Unit) {
-        vm.loadPendingRiders()
-    }
+    LaunchedEffect(Unit) { vm.loadPendingRiders() }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .screenInsets(includeTop = true, includeBottom = true, extraTop = 16.dp)
+            .padding(horizontal = 16.dp)
+    ) {
         Text("Rider da approvare", style = MaterialTheme.typography.headlineMedium)
-
         Spacer(Modifier.height(16.dp))
 
         if (riders.isEmpty()) {
@@ -43,9 +46,7 @@ fun ApprovaRiderScreen(
         }
     }
 
-    // Dialog dettagli rider
-    if (selected != null) {
-        val rider = selected!!
+    selected?.let { rider ->
         AlertDialog(
             onDismissRequest = { selected = null },
             title = { Text("Dettagli Rider") },
@@ -58,14 +59,12 @@ fun ApprovaRiderScreen(
             },
             confirmButton = {
                 TextButton(onClick = {
-                    vm.approveRider(rider.user.uid)
-                    selected = null
+                    vm.approveRider(rider.user.uid); selected = null
                 }) { Text("Approva") }
             },
             dismissButton = {
                 TextButton(onClick = {
-                    vm.rejectRider(rider)
-                    selected = null
+                    vm.rejectRider(rider); selected = null
                 }) { Text("Rifiuta") }
             }
         )

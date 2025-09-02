@@ -45,7 +45,7 @@ fun ProductListScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        // 🔽 Filtro categorie
+        // filtro categorie
         var expanded by remember { mutableStateOf(false) }
         ExposedDropdownMenuBox(
             expanded = expanded,
@@ -76,7 +76,7 @@ fun ProductListScreen(
 
         Spacer(Modifier.height(8.dp))
 
-        // 🔎 search bar
+        // search bar
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },

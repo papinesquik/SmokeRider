@@ -15,12 +15,10 @@ import com.smokerider.app.viewmodel.OrderViewModel
 fun OrderSummaryScreen(
     navController: NavController,
     orderViewModel: OrderViewModel,
-    // Manteniamo il parametro items per compatibilità, ma useremo lo stato del ViewModel per essere sempre allineati.
     items: List<OrderItem>,
     onOrderConfirmed: () -> Unit,
     positionViewModel: PositionViewModel = viewModel()
 ) {
-    // Stato reattivo dal ViewModel (coerente con EffettuaOrdineScreen)
     val cart by orderViewModel.items.collectAsState()
     val total by orderViewModel.total.collectAsState(initial = 0.0)
 
@@ -46,7 +44,6 @@ fun OrderSummaryScreen(
             return@Column
         }
 
-        // Lista articoli (sola lettura qui: le modifiche si fanno nella screen precedente)
         cart.forEach { item ->
             Text("${item.name} × ${item.quantity} = ${euro(item.price * item.quantity)}")
         }
@@ -58,7 +55,6 @@ fun OrderSummaryScreen(
 
         Button(
             onClick = {
-                // Prosegui alla conferma della posizione; l'ordine verrà creato nella screen successiva
                 navController.navigate("customer/position")
             },
             modifier = Modifier.fillMaxWidth()

@@ -28,6 +28,7 @@ import com.smokerider.app.data.model.Position
 import com.smokerider.app.data.repository.FirestoreOrders
 import com.smokerider.app.data.repository.MapsRepository
 import com.smokerider.app.data.repository.toOrdersSafe
+import com.smokerider.app.ui.theme.screenInsets
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -58,10 +59,10 @@ fun RiderHomeScreen(
 
     val scope = rememberCoroutineScope()
 
-    // --- Permesso notifiche Android 13+ (una volta) ---
+    // permesso notifiche Android 13+
     RequestPostNotificationsPermissionOnce()
 
-    // --- Rebind del token FCM ---
+    // token FCM
     LaunchedEffect(riderId) {
         if (riderId.isNotEmpty()) {
             val role = try {
@@ -74,9 +75,7 @@ fun RiderHomeScreen(
                     val token = FirebaseMessaging.getInstance().token.await()
                     db.collection("users").document(riderId)
                         .set(mapOf("fcmToken" to token), SetOptions.merge())
-                } catch (_: Exception) {
-                    // ignora errori
-                }
+                } catch (_: Exception) { /* ignore */ }
             }
         }
     }
@@ -160,7 +159,7 @@ fun RiderHomeScreen(
             }
     }
 
-    // 🔀 Auto-redirect se rider ha già ordine in corso
+    // Auto-redirect se rider ha già ordine in corso
     LaunchedEffect(riderId) {
         if (riderId.isNotEmpty()) {
             try {
@@ -176,9 +175,7 @@ fun RiderHomeScreen(
                     onOrderClick(doc.id)
                     return@LaunchedEffect
                 }
-            } catch (_: Exception) {
-                // ignora errori
-            }
+            } catch (_: Exception) { /* ignore */ }
 
             attachUserListener()
             attachRiderCityListener()
@@ -201,7 +198,8 @@ fun RiderHomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .screenInsets(includeTop = true, includeBottom = true, extraTop = 16.dp)
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text("🚴 Rider Dashboard", style = MaterialTheme.typography.headlineMedium)
@@ -228,9 +226,7 @@ fun RiderHomeScreen(
                         db.collection("users").document(riderId)
                             .update("online", checked)
                             .addOnFailureListener { isOnline = prev }
-                            .addOnSuccessListener {
-                                attachOrdersListener(riderCity)
-                            }
+                            .addOnSuccessListener { attachOrdersListener(riderCity) }
                     }
                 }
             )

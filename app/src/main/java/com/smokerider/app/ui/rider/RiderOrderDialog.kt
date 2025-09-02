@@ -24,9 +24,9 @@ fun RiderOrderDialog(
     orderId: String,
     riderId: String,
     ordersRepo: FirestoreOrders,
-    mapsRepo: MapsRepository,      // usa quello che hai in progetto
+    mapsRepo: MapsRepository,
     onDismiss: () -> Unit,
-    onAccepted: (String) -> Unit   // es. vai al tracking dopo “Accetta”
+    onAccepted: (String) -> Unit
 ) {
     val db = remember { FirebaseFirestore.getInstance() }
     val ctx = LocalContext.current
@@ -39,7 +39,7 @@ fun RiderOrderDialog(
     var isAccepting by remember { mutableStateOf(false) }
     var errorMsg by remember { mutableStateOf<String?>(null) }
 
-    // carica ordine (senza mostrare lo stato nell’UI del dialog)
+    // carica ordine
     LaunchedEffect(orderId) {
         listener?.remove()
         listener = db.collection("orders").document(orderId)
@@ -49,7 +49,7 @@ fun RiderOrderDialog(
     }
     DisposableEffect(Unit) { onDispose { listener?.remove() } }
 
-    // posizione cliente (per “Apri in Mappe”)
+    // posizione cliente
     LaunchedEffect(order?.clientId) {
         val cid = order?.clientId ?: return@LaunchedEffect
         val snap = db.collection("positions")

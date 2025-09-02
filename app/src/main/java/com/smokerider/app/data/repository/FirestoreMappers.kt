@@ -12,7 +12,7 @@ private fun anyToTimestamp(any: Any?): Timestamp? = when (any) {
     is Long -> Timestamp(Date(any))
     is Int -> Timestamp(Date(any.toLong()))
     is Double -> Timestamp(Date(any.toLong()))
-    is Map<*, *> -> { // eventuale { _seconds, _nanoseconds } (SDK web-like)
+    is Map<*, *> -> {
         val seconds = (any["_seconds"] as? Number)?.toLong()
         val nanos = (any["_nanoseconds"] as? Number)?.toInt() ?: 0
         if (seconds != null) Timestamp(seconds, nanos) else null
@@ -43,7 +43,7 @@ private fun anyToItems(any: Any?): List<OrderItem> {
 fun DocumentSnapshot.toOrderSafe(): Order? {
     val d = data ?: return null
     return Order(
-        id = d["id"] as? String ?: id, // fallback all’id del doc
+        id = d["id"] as? String ?: id,
         clientId = d["clientId"] as? String ?: "",
         items = anyToItems(d["items"]),
         total = anyToDouble(d["total"]) ?: 0.0,

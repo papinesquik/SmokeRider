@@ -41,8 +41,8 @@ class FirestoreOrders {
             items = items,
             total = total,
             status = "pending",
-            createdAt = Timestamp(Date(nowMs)),       // ✅ Timestamp
-            expiresAt = Timestamp(Date(expiresAtMs)), // ✅ Timestamp
+            createdAt = Timestamp(Date(nowMs)),       // Timestamp
+            expiresAt = Timestamp(Date(expiresAtMs)), // timestamp
             acceptedBy = null,
             estimatedDeliveryTime = null             // sarà calcolata dopo l'accettazione
         )
@@ -55,7 +55,7 @@ class FirestoreOrders {
     /**
      * Accetta un ordine lato Rider in modo atomico.
      * - Accetta solo se: status == "pending", acceptedBy == null, non scaduto.
-     * - Dopo l'accettazione, calcola e salva l'ETA (best-effort) con sanificazione e correzione.
+     * - Dopo l'accettazione, calcola e salva l'ETAcon sanificazione e correzione.
      */
     suspend fun acceptOrder(orderId: String, riderId: String, mapsRepo: MapsRepository): Boolean {
         val orderRef = col.document(orderId)
@@ -90,7 +90,7 @@ class FirestoreOrders {
 
         if (!accepted) return false
 
-        // 2) BEST-EFFORT: calcolo ETA e salvo (se fallisce, l'ordine resta accettato)
+        // 2) calcolo ETA e salvo (se fallisce, l'ordine resta accettato)
         try {
             val current = orderRef.get().await().toOrderSafe() ?: return true
             val clientId = current.clientId
@@ -119,7 +119,7 @@ class FirestoreOrders {
                     riderPos.longitude ?: 0.0
                 )
 
-                // Sanifica: null/NaN/∞/<=0 => nessuna ETA
+                // Sanifica
                 val sanitized: Double? = when {
                     raw == null -> null
                     raw.isNaN() || raw.isInfinite() -> null
@@ -173,18 +173,11 @@ class FirestoreOrders {
     }
 
     /**
-     * Decide il redirect per il CLIENTE dopo login o all'avvio app:
-     * 1) Se esiste un ordine (clientId=uid) con status in {accepted, on_the_way, delivered}
-     *    prende il più "recente" (createdAt) e torna Tracking(orderId).
-     * 2) Altrimenti, se esiste un ordine con status = pending (più recente), torna Waiting(orderId).
-     * 3) Altrimenti None.
-     *
-     * NB: se in futuro gestirai updatedAt, puoi spostare l'orderBy sul campo aggiornato.
+     * Decide il redirect per il CLIENTE dopo login o all'avvio app
      */
     suspend fun findClientRedirect(uid: String): ClientRedirect = withContext(Dispatchers.IO) {
         val trackingStatuses = listOf("accepted", "on_the_way", "delivered")
 
-        // Evitiamo whereIn + orderBy: 3 query singole, poi scegliamo il più recente
         val bestTracking = trackingStatuses.mapNotNull { st ->
             col.whereEqualTo("clientId", uid)
                 .whereEqualTo("status", st)
@@ -200,7 +193,6 @@ class FirestoreOrders {
             return@withContext ClientRedirect.Tracking(bestTracking.id)
         }
 
-        // Pending più recente
         val pending = col.whereEqualTo("clientId", uid)
             .whereEqualTo("status", "pending")
             .orderBy("createdAt", Query.Direction.DESCENDING)

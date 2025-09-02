@@ -34,12 +34,12 @@ class PositionViewModel : ViewModel() {
 
     fun saveOrUpdatePosition(uid: String, city: String, street: String, latitude: Double, longitude: Double) {
         viewModelScope.launch {
-            val docRef = posRef.document(uid) // 🔹 useremo l’uid come documentId
+            val docRef = posRef.document(uid) // useremo l’uid come documentId
             val newPos = Position(
-                id = docRef.id,   // 🔹 salviamo anche l’id del documento
+                id = docRef.id,   //  salviamo anche l’id del documento
                 uid = uid,
                 city = city,
-                street = street,  // 🔹 street deve includere anche numero civico
+                street = street,  // street deve includere anche numero civico
                 latitude = latitude,
                 longitude = longitude,
                 timestamp = System.currentTimeMillis()

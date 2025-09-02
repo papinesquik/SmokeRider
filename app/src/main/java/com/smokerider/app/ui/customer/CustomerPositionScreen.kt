@@ -25,6 +25,7 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.maps.android.compose.*
 import com.smokerider.app.viewmodel.PositionViewModel
 import com.smokerider.app.viewmodel.OrderViewModel
+import com.smokerider.app.ui.theme.screenInsets
 import java.util.*
 
 @Composable
@@ -44,7 +45,6 @@ fun CustomerPositionScreen(
     var searchQuery by remember { mutableStateOf("") }
     var isPlacing by remember { mutableStateOf(false) }
 
-    // Inizializza Places (idempotente)
     LaunchedEffect(Unit) {
         if (!Places.isInitialized()) {
             try {
@@ -55,7 +55,7 @@ fun CustomerPositionScreen(
 
     val fusedLocation = remember { LocationServices.getFusedLocationProviderClient(context) }
 
-    // Ottieni posizione GPS iniziale (se permesso concesso)
+    // Ottieni posizione GPS iniziale
     LaunchedEffect(Unit) {
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -117,9 +117,12 @@ fun CustomerPositionScreen(
         }
     }
 
-    Column(Modifier.fillMaxSize()) {
-
-        // 🔍 Bottone che apre Autocomplete
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .screenInsets(includeTop = true, includeBottom = true, extraTop = 16.dp) // ⬅️ protezione e distacco
+    ) {
+        // Bottone che apre Autocomplete
         Button(
             onClick = {
                 val fields = listOf(
@@ -185,7 +188,7 @@ fun CustomerPositionScreen(
                     longitude = pos.longitude
                 )
 
-                // 2) Crea ordine dagli item correnti (il ViewModel svuota il carrello se ok)
+                // 2) Crea ordine
                 orderViewModel.createOrder(
                     clientId = uid
                 ) { success, orderId ->

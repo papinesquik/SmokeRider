@@ -20,9 +20,9 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.smokerider.app.data.model.Order
 import com.smokerider.app.data.model.Position
 import com.smokerider.app.data.repository.toOrderSafe
+import com.smokerider.app.ui.theme.screenInsets
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlin.math.max
 
 @Composable
 fun TrackingRiderScreen(
@@ -97,10 +97,12 @@ fun TrackingRiderScreen(
         })
     }
 
+    // Root con screenInsets → niente overlap con status/gesture bar
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .screenInsets(includeTop = true, includeBottom = true, extraTop = 16.dp)
+            .padding(horizontal = 16.dp),
         contentAlignment = Alignment.TopCenter
     ) {
         val o = order
@@ -157,10 +159,7 @@ fun TrackingRiderScreen(
                 when {
                     deliveredLocally || o.status == "delivered" -> {
                         Text("Ordine consegnato ✅")
-                        // niente bottone, redirect già gestito
-                        LaunchedEffect(Unit) {
-                            onGoHome()
-                        }
+                        LaunchedEffect(Unit) { onGoHome() }
                     }
 
                     o.status == "accepted" -> {

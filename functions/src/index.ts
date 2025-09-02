@@ -77,14 +77,14 @@ export const notifyRidersOnPendingOrder = onDocumentWritten(
       android: { priority: "high" },
     });
 
-    // 🔎 Logga dettagli degli errori (senza toccare i token salvati)
+    // Logga dettagli degli errori (senza toccare i token salvati)
     resp.responses.forEach((r, i) => {
       if (!r.success && r.error) {
         logger.info("FCM failure", {
           index: i,
           code: r.error.code,
           message: r.error.message,
-          tokenSuffix: tokens[i]?.slice(-8), // solo ultime 8 per debug
+          tokenSuffix: tokens[i]?.slice(-8),
         });
       }
     });

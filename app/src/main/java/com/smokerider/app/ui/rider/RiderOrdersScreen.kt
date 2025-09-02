@@ -23,7 +23,7 @@ fun RiderOrdersScreen(
     var riderCity by remember { mutableStateOf<String?>(null) }
     var orders by remember { mutableStateOf<List<Order>>(emptyList()) }
 
-    // 🔹 Recupera la città del rider
+    // Recupera la città del rider
     LaunchedEffect(uid) {
         if (uid.isNotEmpty()) {
             val posDoc = db.collection("positions").document(uid).get().await()
@@ -32,7 +32,7 @@ fun RiderOrdersScreen(
         }
     }
 
-    // 🔹 Recupera ordini pending e filtra per città cliente
+    // recupera ordini pending e filtra per città cliente
     LaunchedEffect(riderCity) {
         riderCity?.let { city ->
             db.collection("orders")
@@ -41,7 +41,7 @@ fun RiderOrdersScreen(
                     snapshot?.let { snap ->
                         val allOrders = snap.documents.mapNotNull { it.toObject(Order::class.java) }
 
-                        // 🔹 Recupera posizioni dei clienti e filtra
+                        // Recupera posizioni dei clienti e filtra
                         val filteredOrders = mutableListOf<Order>()
 
                         for (order in allOrders) {
@@ -59,7 +59,7 @@ fun RiderOrdersScreen(
         }
     }
 
-    // 🔹 UI
+    // UI
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Ordini disponibili", style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(16.dp))

@@ -12,7 +12,7 @@ class AuthRepository(
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 ) {
 
-    // 🔹 Registrazione nuovo utente
+    // Registrazione nuovo utente
     suspend fun registerUser(
         email: String,
         password: String,
@@ -27,7 +27,7 @@ class AuthRepository(
             val authResult = auth.createUserWithEmailAndPassword(email, password).await()
             val uid = authResult.user?.uid ?: throw Exception("UID nullo")
 
-            // 🔹 Creo l’oggetto User (senza city/lat/lon → sono in Position)
+            // Creo l’oggetto User (senza city/lat/lon → sono in Position)
             val user = if (role == "rider") {
                 if (city.isNullOrBlank()) throw Exception("La città è obbligatoria per i rider")
                 if (identityDocument.isNullOrBlank()) throw Exception("Il documento è obbligatorio per i rider")
@@ -48,10 +48,10 @@ class AuthRepository(
                 )
             }
 
-            // 🔹 Salvo utente in Firestore
+            // Salvo utente in Firestore
             firestore.collection("users").document(uid).set(user).await()
 
-            // 🔹 Salvo posizione separata se ho dati
+            // Salvo posizione separata se ho dati
             if (city != null || street != null || latitude != null || longitude != null) {
                 val positionId = firestore.collection("positions").document().id
                 val position = Position(
@@ -71,13 +71,13 @@ class AuthRepository(
         }
     }
 
-    // 🔹 Login utente esistente
+    // Login utente esistente
     suspend fun loginUser(email: String, password: String): Result<User> {
         return try {
             val authResult = auth.signInWithEmailAndPassword(email, password).await()
             val uid = authResult.user?.uid ?: throw Exception("UID nullo")
 
-            // 🔹 Recupero dati utente
+            // Recupero dati utente
             val user = getUserById(uid) ?: throw Exception("Utente non trovato")
 
             Log.d(
@@ -95,35 +95,35 @@ class AuthRepository(
         }
     }
 
-    // 🔹 Aggiorna stato online/offline
+    // Aggiorna stato online/offline
     suspend fun updateOnlineStatus(uid: String, online: Boolean) {
         firestore.collection("users").document(uid)
             .update("online", online)
             .await()
     }
 
-    // 🔹 Aggiorna token FCM
+    // Aggiorna token FCM
     suspend fun updateFcmToken(uid: String, token: String) {
         firestore.collection("users").document(uid)
             .update("fcmToken", token)
             .await()
     }
 
-    // 🔹 Logout
+    // Logout
     fun logout() {
         auth.signOut()
     }
 
-    // 🔹 Ottieni solo UID
+    // Ottieni solo UID
     fun getCurrentUserId(): String? = auth.currentUser?.uid
 
-    // 🔹 Ottieni utente loggato con dati da Firestore
+    // Ottieni utente loggato con dati da Firestore
     suspend fun getCurrentUser(): User? {
         val uid = auth.currentUser?.uid ?: return null
         return getUserById(uid)
     }
 
-    // 🔹 Recupera un utente da Firestore
+    // Recupera un utente da Firestore
     suspend fun getUserById(uid: String): User? {
         val snapshot = firestore.collection("users").document(uid).get().await()
         if (!snapshot.exists()) return null

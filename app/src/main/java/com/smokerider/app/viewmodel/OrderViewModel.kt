@@ -31,7 +31,7 @@ class OrderViewModel(
         .map { list -> list.sumOf { it.quantity } }
         .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
-    /** Aggiungi N unità (>=1) di un prodotto. Se esiste, somma. */
+    /** Aggiungi N unità (>=1) di un prodotto. Se esiste, somma */
     fun addItem(product: Product, quantity: Int = 1) {
         if (quantity <= 0) return
         val current = _items.value.toMutableList()
@@ -52,7 +52,7 @@ class OrderViewModel(
         _items.value = current
     }
 
-    /** Imposta la quantità assoluta. Se qty <= 0 rimuove l'articolo. */
+    /** Imposta la quantità assoluta. Se qty <= 0 rimuove l'articolo */
     fun setQuantity(productId: String, qty: Int) {
         val current = _items.value.toMutableList()
         val idx = current.indexOfFirst { it.productId == productId }
@@ -65,7 +65,7 @@ class OrderViewModel(
         _items.value = current
     }
 
-    /** +1 alla quantità (se non esiste, non fa nulla). */
+    /** +1 alla quantità (se non esiste, non fa nulla)*/
     fun increment(productId: String) {
         val current = _items.value.toMutableList()
         val idx = current.indexOfFirst { it.productId == productId }
@@ -75,7 +75,7 @@ class OrderViewModel(
         _items.value = current
     }
 
-    /** -1 alla quantità. Se scende a 0 rimuove l'articolo. */
+    /** -1 alla quantità. Se scende a 0 rimuove l'articolo*/
     fun decrement(productId: String) {
         val current = _items.value.toMutableList()
         val idx = current.indexOfFirst { it.productId == productId }
@@ -86,21 +86,21 @@ class OrderViewModel(
         _items.value = current
     }
 
-    /** Rimuove completamente un prodotto dal carrello. */
+    /** Rimuove completamente un prodotto dal carrello*/
     fun removeItem(productId: String) {
         val filtered = _items.value.filterNot { it.productId == productId }
         _items.value = filtered
     }
 
-    /** Svuota il carrello. */
+    /** Svuota il carrello*/
     fun clearOrder() {
         _items.value = emptyList()
     }
 
-    /** Ritorna una snapshot degli item (helper legacy). */
+    /** Ritorna una snapshot degli item */
     fun getItems(): List<OrderItem> = _items.value
 
-    /** Crea l'ordine usando lo stato corrente e svuota se va a buon fine. */
+    /** Crea l'ordine usando lo stato corrente e svuota se va a buon fine*/
     fun createOrder(
         clientId: String,
         onComplete: (Boolean, String?) -> Unit
@@ -119,7 +119,6 @@ class OrderViewModel(
         }
     }
 
-    /** Versione compatibile con la tua firma precedente. */
     fun createOrder(
         clientId: String,
         items: List<OrderItem>,

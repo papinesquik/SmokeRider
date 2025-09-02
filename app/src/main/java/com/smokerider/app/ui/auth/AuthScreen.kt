@@ -1,4 +1,3 @@
-// File: app/src/main/java/com/smokerider/app/ui/auth/AuthScreen.kt
 package com.smokerider.app.ui.auth
 
 import android.app.Activity
