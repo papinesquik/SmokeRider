@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Chiave per Maps/Places (può essere la stessa di …LVmBRM o una dedicata per Maps) -->
+    <string name="google_maps_key">AIzaSyBolTuSsqfHNXWdZYZTz32CjuGMSLVmBRM</string>
+</resources>
