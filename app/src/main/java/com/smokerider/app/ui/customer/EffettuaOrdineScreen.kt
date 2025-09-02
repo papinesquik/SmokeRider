@@ -285,7 +285,7 @@ private fun CollapsibleCart(
                         }
                     }
 
-                    // Riepilogo + CTA
+                    // Riepilogo
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
