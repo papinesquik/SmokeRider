@@ -1,12 +1,6 @@
+import java.util.Properties
+
 plugins {
-    /*id("com.android.application")
-
-    // Add the Google services Gradle plugin
-    id("com.google.gms.google-services")
-
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)*/
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.21"
@@ -25,6 +19,15 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // 🔹 Legge MAPS_API_KEY da local.properties e lo espone come BuildConfig
+        val localProperties = Properties()
+        val localFile = rootProject.file("local.properties")
+        if (localFile.exists()) {
+            localProperties.load(localFile.inputStream())
+        }
+        val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY") ?: ""
+        buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
     }
 
     buildTypes {
@@ -36,6 +39,30 @@ android {
             )
         }
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true   // ✅ abilita i campi custom in BuildConfig
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -49,6 +76,14 @@ android {
 }
 
 dependencies {
+    // Material Icons per Jetpack Compose
+    implementation("androidx.compose.material:material-icons-extended")
+
+    // Dipendenze per calcolo tempo stimato
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.google.code.gson:gson:2.10.1")
+
+
     // Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
 
@@ -60,16 +95,21 @@ dependencies {
     // Jetpack Lifecycle (ViewModel + LiveData)
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
-
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+    implementation ("androidx.navigation:navigation-compose:2.7.7")
 
-    implementation ("com.google.android.gms:play-services-maps:18.1.0")
-    implementation ("com.google.android.libraries.places:places:3.3.0")
 
-    // Material Design (ti servirà comunque)
+    // Maps + Places + Location
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.android.libraries.places:places:3.5.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation ("com.google.maps.android:maps-compose:2.11.4")
+    implementation ("com.google.accompanist:accompanist-permissions:0.35.0-alpha")
+
+    // Material Design
     implementation("com.google.android.material:material:1.12.0")
 
-    // Compose + AndroidX (già presenti da te)
+    // Compose + AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -87,4 +127,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
 }
